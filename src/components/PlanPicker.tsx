@@ -62,8 +62,8 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
   const ready = !loading && (text.trim().length >= 3 || file);
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-8 px-6 py-8 md:grid-cols-[280px_1fr]">
-      <aside className="space-y-4 md:sticky md:top-6 md:self-start">
+    <div className="mx-auto grid max-w-7xl gap-10 px-8 py-10 md:grid-cols-[300px_1fr]">
+      <aside className="space-y-5 md:sticky md:top-6 md:self-start">
         <div>
           <span className="mb-1 block text-xs font-medium text-muted-foreground">Предмет</span>
           <Combobox
@@ -123,7 +123,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
         </button>
       </aside>
 
-      <section className="space-y-3">
+      <section className="space-y-4">
         <h2 className="mb-4 text-sm font-medium text-muted-foreground">
           Рекомендовано: <span className="text-foreground">{res && !res.error ? res.picks.length : 0}</span>
         </h2>
@@ -131,32 +131,23 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
         {(err || res?.error) && <div role="alert" className="rounded-2xl border border-destructive/30 bg-card p-4 text-sm text-destructive">{err || res?.error}</div>}
         {res && !res.error && !loading && (
           <>
-            <div className="rounded-2xl border border-success/40 bg-success p-5 text-success-foreground">
-              <p className="text-xs font-medium uppercase tracking-wide opacity-80">Определено из файла</p>
-              <p className="mt-1 font-semibold">{res.subject}{res.grade ? ` · ${res.grade} класс` : ""}</p>
+            <div className="rounded-2xl border border-border/40 bg-hero px-6 py-5 text-foreground">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Определено из файла</p>
+              <p className="mt-1 text-base font-semibold">{res.subject}{res.grade ? ` · ${res.grade} класс` : ""}</p>
               {res.goals.length > 0 && (
                 <>
-                  <h3 className="mt-3 text-sm font-semibold">Учебные цели урока</h3>
-                  <ol className="mt-1 list-decimal space-y-1 pl-5 text-sm">{res.goals.map((g) => <li key={g}>{g}</li>)}</ol>
+                  <h3 className="mt-4 text-sm font-semibold">Учебные цели урока</h3>
+                  <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed">{res.goals.map((g) => <li key={g}>{g}</li>)}</ol>
                 </>
               )}
-              {res.summary && <p className="mt-3 text-sm">{res.summary}</p>}
+              {res.summary && <p className="mt-4 text-sm leading-relaxed">{res.summary}</p>}
             </div>
-            {res.picks.map((p) => (
-              <div key={p.url} className="rounded-2xl border border-border bg-card p-5 transition hover:border-primary">
-                <div className="flex flex-wrap gap-2 text-xs">
-                  <span className="rounded bg-primary/10 px-2 py-0.5 font-medium text-primary">{res.subject}</span>
-                  <span className="rounded bg-muted px-2 py-0.5 text-muted-foreground">{p.grade} класс · урок {p.lesson}</span>
-                  {p.level && <span className="rounded bg-muted px-2 py-0.5 text-muted-foreground">{p.level}</span>}
-                </div>
-                <h3 className="mt-2 font-semibold text-foreground">{p.title}</h3>
-                {p.goal && <p className="mt-1 text-sm text-brand">Цель: {p.goal}</p>}
-                <p className="mt-2 text-sm text-muted-foreground">{p.why}</p>
-                <a href={p.url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm font-medium text-primary hover:underline">
-                  Открыть ресурс ЦОР →
-                </a>
-              </div>
-            ))}
+            <ul className="space-y-4">
+              {res.picks.map((p) => (
+                <LessonCard key={p.url} subject={res.subject} grade={p.grade} lesson={p.lesson} level={p.level}
+                  title={p.title} goal={p.goal} text={p.why} url={p.url} />
+              ))}
+            </ul>
             {res.picks.length === 0 && <p className="text-muted-foreground">Подходящих материалов не найдено.</p>}
           </>
         )}

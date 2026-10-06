@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PlanPicker } from "@/components/PlanPicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Combobox } from "@/components/ui/combobox";
+import { LessonCard } from "@/components/LessonCard";
 import { useEffect, useMemo, useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -66,10 +67,10 @@ function Index() {
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-hero border-b border-border/40">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-6 py-3">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-8 py-5">
           <div className="flex min-w-0 items-center gap-2">
             <span className="h-3 w-3 shrink-0 rounded-full bg-brand-gradient" />
-            <span className="truncate font-display text-base font-bold text-foreground">Каталог ЦОР</span>
+            <span className="truncate font-display text-lg font-bold text-foreground">Каталог ЦОР</span>
             <span className="hidden text-sm text-muted-foreground sm:inline">
               ·{" "}
               {data
@@ -80,7 +81,7 @@ function Index() {
           <div className="ml-auto inline-flex rounded-2xl bg-secondary p-1">
             {(["catalog", "ai"] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)}
-                className={`rounded-xl px-4 py-1.5 text-sm font-medium transition ${tab === t ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-card"}`}>
+                className={`rounded-xl px-5 py-2 text-sm font-medium transition ${tab === t ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-card"}`}>
                 {t === "catalog" ? "Каталог материалов" : "ИИ-подбор материалов"}
               </button>
             ))}
@@ -90,8 +91,8 @@ function Index() {
       {tab === "ai" && <PlanPicker subjects={subjects as string[]} />}
       {tab === "catalog" && (
 
-      <main className="mx-auto grid max-w-6xl gap-8 px-6 py-8 md:grid-cols-[280px_1fr]">
-        <aside className="space-y-4 md:sticky md:top-6 md:self-start">
+      <main className="mx-auto grid max-w-7xl gap-10 px-8 py-10 md:grid-cols-[300px_1fr]">
+        <aside className="space-y-5 md:sticky md:top-6 md:self-start">
           <Field label="Поиск по теме, ключевым словам">
             <input className="field" value={q} onChange={(e) => setQ(e.target.value)} placeholder="например, проценты" />
           </Field>
@@ -151,22 +152,10 @@ function Index() {
           <h2 className="mb-4 text-sm font-medium text-muted-foreground">
             Рекомендовано: <span className="text-foreground">{result.length.toLocaleString("ru")}</span>
           </h2>
-          <ul className="space-y-3">
+          <ul className="space-y-4">
             {result.slice(0, limit).map((x) => (
-              <li key={x.u + x.s + x.g} className="rounded-2xl border border-border bg-card p-5 transition hover:border-primary">
-                <div className="flex flex-wrap gap-2 text-xs">
-                  <span className="rounded bg-primary/10 px-2 py-0.5 font-medium text-primary">{x.s}</span>
-                  <span className="rounded bg-muted px-2 py-0.5 text-muted-foreground">{x.g} класс · урок {x.n}</span>
-                  <span className="rounded bg-muted px-2 py-0.5 text-muted-foreground">{x.l}</span>
-                  {x.ty && <span className="rounded bg-muted px-2 py-0.5 text-muted-foreground">{x.ty}</span>}
-                  {x.y && <span className="rounded bg-accent px-2 py-0.5 text-accent-foreground">ЭОР {x.y}</span>}
-                </div>
-                <h3 className="mt-2 font-semibold text-foreground">{x.t}</h3>
-                {x.k.length > 0 && <p className="mt-1 text-sm text-muted-foreground">{x.k.join(", ")}</p>}
-                <a href={x.u} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm font-medium text-primary hover:underline">
-                  Открыть ресурс ЦОР →
-                </a>
-              </li>
+              <LessonCard key={x.u + x.s + x.g} subject={x.s} grade={x.g} lesson={x.n} level={x.l} type={x.ty} year={x.y}
+                title={x.t} text={x.k.join(", ")} url={x.u} />
             ))}
           </ul>
           {data && result.length === 0 && <p className="text-muted-foreground">Ничего не найдено — измените фильтры.</p>}
