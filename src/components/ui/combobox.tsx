@@ -36,7 +36,7 @@ export function Combobox({ value, onValueChange, options, placeholder, autoLabel
             className,
           )}
         >
-          <span className="truncate">{value ? fmt(value) : autoLabel || placeholder}</span>
+          <span className="truncate">{!value || value === autoValue ? autoLabel || placeholder : fmt(value)}</span>
           <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
         </button>
       </PopoverTrigger>
