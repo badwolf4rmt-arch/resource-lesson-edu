@@ -48,7 +48,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
           t = `${t}\n\n${r.value}`.trim();
         } else payload = { name: file.name, mime: ext === "pdf" ? "application/pdf" : ext === "png" ? "image/png" : "image/jpeg", base64: await toBase64(file) };
       }
-      setRes(await run({ data: { text: t.slice(0, MAX), file: payload, subject: subject === AUTO ? "" : subject, grade: grade === AUTO ? null : Number(grade) } }));
+      setRes(await run({ data: { text: t.slice(0, MAX), file: payload, subject: subject === AUTO ? "" : subject, grade: grade === AUTO ? null : (Number(grade.match(/\d+/)?.[0]) || null) } }));
     } catch (e) {
       const m = e instanceof Error ? e.message : "Ошибка запроса";
       setErr(/unauthori[sz]ed|not valid JSON/i.test(m)

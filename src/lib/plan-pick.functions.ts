@@ -57,7 +57,7 @@ export const pickFromPlan = createServerFn({ method: "POST" })
         type: "text",
         text: `Ты методист. Учитель прислал материал${data.file ? " (во вложении)" : ""}: это может быть короткая формулировка учебной цели, план урока или учебный текст. Определи, что это, и извлеки учебные цели (если это уже цель — уточни и разбей её при необходимости).
 ${data.subject ? `Предмет задан учителем: ${data.subject}.` : `Определи предмет — строго одно название из списка: ${subjects.join("; ")}.`}
-${data.grade ? `Класс задан учителем: ${data.grade}.` : "Определи класс (число 1–11) или null, если неясно."}
+${data.grade ? `Класс задан учителем: ${data.grade}.` : "Определи класс (целое число 1–11) по содержанию, сложности и терминам; null только если совсем невозможно."}
 Сформулируй 2–5 конкретных учебных целей (что ученики должны знать/уметь), коротко.
 Ответ строго JSON: {"subject": string, "grade": number|null, "goals": string[]}
 ${data.text.trim() ? `\nТекст от учителя:\n${data.text}` : ""}`,
@@ -69,8 +69,22 @@ ${data.text.trim() ? `\nТекст от учителя:\n${data.text}` : ""}`,
           : { type: "file", file: { filename: data.file.name, file_data: url } });
       }
       const ex = await ask(key, parts);
-      const subject = data.subject || (subjects.includes(ex.subject) ? ex.subject : "");
-      const grade: number | null = data.grade ?? (typeof ex.grade === "number" ? ex.grade : null);
+      const norm = (v: string) => v.toLowerCase().replace(/ё/g, "е").replace(/[^a-zа-я0-9]+/g, " ").trim();
+      const matchSubject = (v: unknown): string => {
+        if (typeof v !== "string" || !v.trim()) return "";
+        const n = norm(v);
+        return subjects.find((s) => norm(s) === n)
+          ?? subjects.find((s) => norm(s).startsWith(n) || n.startsWith(norm(s)))
+          ?? subjects.find((s) => norm(s).includes(n) || n.includes(norm(s)))
+          ?? "";
+      };
+      const toGrade = (v: unknown): number | null => {
+        const m = String(v ?? "").match(/\d+/);
+        const g = m ? Number(m[0]) : NaN;
+        return g >= 1 && g <= 11 ? g : null;
+      };
+      const subject = matchSubject(data.subject) || data.subject || matchSubject(ex.subject);
+      const grade: number | null = data.grade ?? toGrade(ex.grade);
       const goals: string[] = (Array.isArray(ex.goals) ? ex.goals : []).filter((g: unknown) => typeof g === "string").slice(0, 5);
       if (!subject) return { ...empty("Не удалось определить предмет — выберите его вручную."), goals };
       if (!goals.length) return empty("Не удалось извлечь учебные цели из плана.");
