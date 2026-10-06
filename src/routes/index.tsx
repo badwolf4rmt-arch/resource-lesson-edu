@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AiPicker } from "@/components/AiPicker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useMemo, useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -95,10 +96,12 @@ function Index() {
             <input className="field" value={q} onChange={(e) => setQ(e.target.value)} placeholder="например, проценты" />
           </Field>
           <Field label="Предмет">
-            <select className="field" value={subject} onChange={(e) => { setSubject(e.target.value); setGrade(""); setType(""); }}>
-              <option value="">Все предметы</option>
-              {subjects.map((s) => <option key={s}>{s}</option>)}
-            </select>
+            <Select value={subject} onValueChange={(v) => { setSubject(v); setGrade(""); setType(""); }}>
+              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Все предметы" /></SelectTrigger>
+              <SelectContent className="max-h-72">
+                {subjects.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </Field>
           <Field label="Класс">
             <select className="field" value={grade} onChange={(e) => setGrade(e.target.value)}>
