@@ -92,6 +92,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
             placeholder="Найти или ввести предмет"
             className="border-border bg-card shadow-none"
           />
+          {byAi.subject && <span className="mt-1 block text-xs text-brand">Определено ИИ по материалу</span>}
         </div>
         <div>
           <span className="mb-1 block text-xs font-medium text-muted-foreground">Класс</span>
@@ -104,6 +105,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
             format={(v) => `${v} класс`}
             className="border-border bg-card shadow-none"
           />
+          {byAi.grade && <span className="mt-1 block text-xs text-brand">Определено ИИ по материалу</span>}
         </div>
         <div
           onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
@@ -114,7 +116,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
             <>
               <p className="break-all text-sm font-semibold text-foreground">{file.name}</p>
               <p className="mt-1 text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} МБ</p>
-              <button onClick={() => { setFile(null); if (input.current) input.current.value = ""; }}
+              <button onClick={() => { resetAi(); setFile(null); if (input.current) input.current.value = ""; }}
                 className="mt-3 rounded-md bg-secondary px-4 py-1.5 text-xs font-medium text-foreground hover:opacity-90">Убрать файл</button>
             </>
           ) : (
