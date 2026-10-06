@@ -12,11 +12,13 @@ type ComboboxProps = {
   options: string[];
   placeholder: string;
   autoLabel?: string;
+  emptyLabel?: string;
+  freeInput?: boolean;
   format?: (v: string) => string;
   className?: string;
 };
 
-export function Combobox({ value, onValueChange, options, placeholder, autoLabel, format, className }: ComboboxProps) {
+export function Combobox({ value, onValueChange, options, placeholder, autoLabel, emptyLabel, freeInput = true, format, className }: ComboboxProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const fmt = format ?? ((v: string) => v);
@@ -36,7 +38,7 @@ export function Combobox({ value, onValueChange, options, placeholder, autoLabel
             className,
           )}
         >
-          <span className="truncate">{!value || value === autoValue ? autoLabel || placeholder : fmt(value)}</span>
+          <span className="truncate">{!value ? (emptyLabel || autoLabel || placeholder) : value === autoValue ? autoLabel : fmt(value)}</span>
           <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
         </button>
       </PopoverTrigger>
@@ -44,6 +46,16 @@ export function Combobox({ value, onValueChange, options, placeholder, autoLabel
         <Command shouldFilter={false}>
           <CommandInput value={search} onValueChange={setSearch} placeholder={placeholder} />
           <CommandList className="max-h-72">
+            {emptyLabel && !trimmed && (
+              <CommandItem
+                value="__empty__"
+                onSelect={() => { onValueChange(""); setSearch(""); setOpen(false); }}
+                className="cursor-pointer"
+              >
+                <Check className={cn("mr-2 h-4 w-4", !value ? "opacity-100" : "opacity-0")} />
+                {emptyLabel}
+              </CommandItem>
+            )}
             {hasAuto && !trimmed && (
               <CommandItem
                 value={COMBO_AUTO}
@@ -67,7 +79,7 @@ export function Combobox({ value, onValueChange, options, placeholder, autoLabel
                   {fmt(o)}
                 </CommandItem>
               ))}
-            {trimmed && (
+            {trimmed && freeInput && (
               <CommandItem
                 value={`__custom__${trimmed}`}
                 onSelect={() => { onValueChange(trimmed); setSearch(""); setOpen(false); }}
