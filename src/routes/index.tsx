@@ -65,19 +65,22 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-hero">
-        <div className="mx-auto max-w-6xl px-6 pb-8 pt-10 text-center">
-          <div className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground">
-            <span className="h-3 w-3 rounded-full bg-brand-gradient" /> Каталог ЦОР
+      <header className="bg-hero border-b border-border/40">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-6 py-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="h-3 w-3 shrink-0 rounded-full bg-brand-gradient" />
+            <span className="truncate font-display text-base font-bold text-foreground">Каталог ЦОР</span>
+            <span className="hidden text-sm text-muted-foreground sm:inline">
+              ·{" "}
+              {data
+                ? `${data.length.toLocaleString("ru")} ${plural(data.length, "урок", "урока", "уроков")} · ${subjects.length} ${plural(subjects.length, "предмет", "предмета", "предметов")}`
+                : "Загрузка…"}
+            </span>
           </div>
-          <h1 className="mt-2 font-display text-3xl font-bold text-foreground md:text-4xl">Чем вам помочь?</h1>
-          <p className="mt-2 text-muted-foreground">
-            {data ? `${data.length.toLocaleString("ru")} ${plural(data.length, "урок", "урока", "уроков")} · ${subjects.length} ${plural(subjects.length, "предмет", "предмета", "предметов")}` : "Загрузка материалов…"}
-          </p>
-          <div className="mt-6 inline-flex rounded-2xl bg-secondary p-1">
+          <div className="ml-auto inline-flex rounded-2xl bg-secondary p-1">
             {(["catalog", "ai"] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)}
-                className={`rounded-xl px-5 py-2 text-sm font-medium transition ${tab === t ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-card"}`}>
+                className={`rounded-xl px-4 py-1.5 text-sm font-medium transition ${tab === t ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-card"}`}>
                 {t === "catalog" ? "Каталог материалов" : "ИИ-подбор материалов"}
               </button>
             ))}
