@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { pickFromPlan, type PlanResult } from "@/lib/plan-pick.functions";
+import { Combobox } from "@/components/ui/combobox";
 
 const MAX = 20000;
 const AUTO = "__auto";
