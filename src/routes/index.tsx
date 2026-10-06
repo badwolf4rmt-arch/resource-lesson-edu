@@ -99,7 +99,7 @@ function Index() {
             <Select value={subject} onValueChange={(v) => { setSubject(v); setGrade(""); setType(""); }}>
               <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Все предметы" /></SelectTrigger>
               <SelectContent className="max-h-72">
-                {subjects.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                {subjects.map((s) => <SelectItem key={s} value={String(s)}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
           </Field>
@@ -121,7 +121,7 @@ function Index() {
           <Field label="Тип урока">
             <Select value={type} onValueChange={setType}>
               <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Любой" /></SelectTrigger>
-              <SelectContent className="max-h-72">{types.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+              <SelectContent className="max-h-72">{types.map((t) => <SelectItem key={t} value={String(t)}>{t}</SelectItem>)}</SelectContent>
             </Select>
           </Field>
           <Field label="Плашка ЭОР">
