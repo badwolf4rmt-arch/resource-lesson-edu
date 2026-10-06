@@ -94,7 +94,7 @@ function Index() {
       <main className="mx-auto grid max-w-7xl gap-10 px-8 py-10 md:grid-cols-[300px_1fr]">
         <aside className="space-y-5 md:sticky md:top-6 md:self-start">
           <Field label="Поиск по теме, ключевым словам">
-            <input className="field" value={q} onChange={(e) => setQ(e.target.value)} placeholder="например, проценты" />
+            <input className="field" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Например, проценты" />
           </Field>
           <Field label="Предмет">
             <Combobox
@@ -174,7 +174,7 @@ function Index() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
+      <span className="mb-2 block text-sm font-medium text-foreground">{label}</span>
       {children}
     </label>
   );
