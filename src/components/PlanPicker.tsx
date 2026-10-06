@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { pickFromPlan, type PlanResult } from "@/lib/plan-pick.functions";
+import { cap } from "@/lib/text";
 import { Combobox } from "@/components/ui/combobox";
 import { LessonCard } from "@/components/LessonCard";
 
@@ -141,7 +142,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
                   <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed">{res.goals.map((g) => <li key={g}>{cap(g)}</li>)}</ol>
                 </>
               )}
-              {res.summary && <p className="mt-4 text-sm leading-relaxed">{res.summary}</p>}
+              {res.summary && <p className="mt-4 text-sm leading-relaxed">{cap(res.summary)}</p>}
             </div>
             <ul className="space-y-4">
               {res.picks.map((p) => (
