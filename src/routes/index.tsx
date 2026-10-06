@@ -84,11 +84,7 @@ function Index() {
           </div>
         </div>
       </header>
-      {tab === "ai" && (
-        <main className="mx-auto max-w-3xl px-6 py-8">
-          <PlanPicker subjects={subjects as string[]} />
-        </main>
-      )}
+      {tab === "ai" && <PlanPicker subjects={subjects as string[]} />}
       {tab === "catalog" && (
 
       <main className="mx-auto grid max-w-6xl gap-8 px-6 py-8 md:grid-cols-[280px_1fr]">
