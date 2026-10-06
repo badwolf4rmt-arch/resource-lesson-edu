@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AiPicker } from "@/components/AiPicker";
 import { useEffect, useMemo, useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -27,6 +28,7 @@ function Index() {
   const [year, setYear] = useState("");
   const [q, setQ] = useState("");
   const [limit, setLimit] = useState(PAGE);
+  const [tab, setTab] = useState<"catalog" | "ai">("catalog");
 
   useEffect(() => {
     fetch("/cor.json").then((r) => r.json()).then(setData);
@@ -61,15 +63,31 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto max-w-6xl px-6 py-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Каталог ЦОР</p>
-          <h1 className="mt-2 font-display text-3xl font-bold text-foreground md:text-4xl">Подбор цифровых уроков</h1>
+      <header className="bg-hero">
+        <div className="mx-auto max-w-6xl px-6 pb-8 pt-10 text-center">
+          <div className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground">
+            <span className="h-3 w-3 rounded-full bg-brand-gradient" /> Каталог ЦОР
+          </div>
+          <h1 className="mt-2 font-display text-3xl font-bold text-foreground md:text-4xl">Чем вам помочь?</h1>
           <p className="mt-2 text-muted-foreground">
-            {data ? `${data.length.toLocaleString("ru")} уроков · ${subjects.length} предметов` : "Загрузка материалов…"}
+            {data ? `${data.length.toLocaleString("ru")} ${plural(data.length, "урок", "урока", "уроков")} · ${subjects.length} ${plural(subjects.length, "предмет", "предмета", "предметов")}` : "Загрузка материалов…"}
           </p>
+          <div className="mt-6 inline-flex rounded-2xl bg-secondary p-1">
+            {(["catalog", "ai"] as const).map((t) => (
+              <button key={t} onClick={() => setTab(t)}
+                className={`rounded-xl px-5 py-2 text-sm font-medium transition ${tab === t ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-card"}`}>
+                {t === "catalog" ? "Каталог материалов" : "ИИ-подбор по цели"}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
+      {tab === "ai" && (
+        <main className="mx-auto max-w-3xl px-6 py-8">
+          <AiPicker subjects={subjects as string[]} gradesFor={(s) => [...new Set((data ?? []).filter((x) => x.s === s).map((x) => x.g))].sort((a, b) => a - b)} />
+        </main>
+      )}
+      {tab === "catalog" && (
 
       <main className="mx-auto grid max-w-6xl gap-8 px-6 py-8 md:grid-cols-[280px_1fr]">
         <aside className="space-y-4 md:sticky md:top-6 md:self-start">
@@ -119,7 +137,7 @@ function Index() {
           </h2>
           <ul className="space-y-3">
             {result.slice(0, limit).map((x) => (
-              <li key={x.u + x.s + x.g} className="rounded-lg border border-border bg-card p-4 transition hover:border-primary">
+              <li key={x.u + x.s + x.g} className="rounded-2xl border border-border bg-card p-5 transition hover:border-primary">
                 <div className="flex flex-wrap gap-2 text-xs">
                   <span className="rounded bg-primary/10 px-2 py-0.5 font-medium text-primary">{x.s}</span>
                   <span className="rounded bg-muted px-2 py-0.5 text-muted-foreground">{x.g} класс · урок {x.n}</span>
@@ -143,6 +161,7 @@ function Index() {
           )}
         </section>
       </main>
+      )}
     </div>
   );
 }
@@ -154,4 +173,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       {children}
     </label>
   );
+}
+
+function plural(n: number, one: string, few: string, many: string) {
+  const a = n % 100, b = n % 10;
+  if (a >= 11 && a <= 14) return many;
+  return b === 1 ? one : b >= 2 && b <= 4 ? few : many;
 }

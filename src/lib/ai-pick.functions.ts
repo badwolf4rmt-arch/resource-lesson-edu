@@ -8,7 +8,7 @@ export type Pick = { title: string; url: string; grade: number; lesson: number; 
 const MODEL = "google/gemini-3.1-pro-preview";
 
 export const pickMaterials = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ subject: z.string().min(1), grade: z.number(), goal: z.string().min(3).max(2000) }).parse(d))
+  .validator((d) => z.object({ subject: z.string().min(1), grade: z.number(), goal: z.string().min(3).max(2000) }).parse(d))
   .handler(async ({ data }): Promise<{ picks: Pick[]; summary: string; error?: string }> => {
     const key = process.env["OPENROUTER_API_KEY"];
     if (!key) return { picks: [], summary: "", error: "Ключ OpenRouter ещё не добавлен." };
@@ -50,6 +50,6 @@ export const pickMaterials = createServerFn({ method: "POST" })
     }
     const picks = (parsed.picks ?? [])
       .filter((p) => candidates[p.i])
-      .map((p) => { const x = candidates[p.i]; return { title: x.t, url: x.u, grade: x.g, lesson: x.n, level: x.l, why: p.why }; });
+      .map((p) => { const x = candidates[p.i]!; return { title: x.t, url: x.u, grade: x.g, lesson: x.n, level: x.l, why: p.why }; });
     return { picks, summary: parsed.summary ?? "" };
   });
