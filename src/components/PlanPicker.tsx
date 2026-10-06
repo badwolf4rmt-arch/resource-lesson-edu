@@ -89,14 +89,6 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
             className="border-border bg-card shadow-none"
           />
         </div>
-        <div>
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">Цель, план урока или текст</span>
-          <div className="relative">
-            <textarea className="field min-h-40 pb-8" maxLength={MAX} value={text} onChange={(e) => setText(e.target.value)}
-              placeholder="Например: научить решать задачи на проценты — или вставьте план урока, текст из учебника, статьи, презентации" />
-            <span className="pointer-events-none absolute bottom-3 right-4 text-xs text-muted-foreground">{text.length}/{MAX}</span>
-          </div>
-        </div>
         <div
           onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
           onDragLeave={() => setDrag(false)}
@@ -118,6 +110,14 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
             </>
           )}
           <input ref={input} type="file" hidden accept=".docx,.pdf,.txt,.jpg,.jpeg,.png" onChange={(e) => accept(e.target.files?.[0])} />
+        </div>
+        <div>
+          <span className="mb-1 block text-xs font-medium text-muted-foreground">Цель, план урока или текст</span>
+          <div className="relative">
+            <textarea className="field min-h-40 pb-8" maxLength={MAX} value={text} onChange={(e) => setText(e.target.value)}
+              placeholder="Например: научить решать задачи на проценты — или вставьте план урока, текст из учебника, статьи, презентации" />
+            <span className="pointer-events-none absolute bottom-3 right-4 text-xs text-muted-foreground">{text.length}/{MAX}</span>
+          </div>
         </div>
         <button onClick={submit} disabled={!ready}
           className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-40">
