@@ -92,6 +92,7 @@ ${data.text.trim() ? `\nТекст от учителя:\n${data.text}` : ""}`,
       // 2. Подбор материалов
       let pool = all.filter((x) => x.s === subject && (grade == null || x.g === grade));
       if (!pool.length) pool = all.filter((x) => x.s === subject);
+      if (!pool.length) pool = all.filter((x) => grade == null || x.g === grade);
       const words = goals.join(" ").toLowerCase().split(/[^a-zа-яё0-9]+/i).filter((w) => w.length > 3).map((w) => w.slice(0, Math.max(4, w.length - 2)));
       const scored = pool
         .map((x) => { const hay = [x.t, ...x.k, ...x.c].join(" ").toLowerCase(); return { x, s: words.reduce((a, w) => a + (hay.includes(w) ? 1 : 0), 0) }; })
