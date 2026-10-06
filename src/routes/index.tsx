@@ -70,7 +70,7 @@ function Index() {
           </div>
           <h1 className="mt-2 font-display text-3xl font-bold text-foreground md:text-4xl">Чем вам помочь?</h1>
           <p className="mt-2 text-muted-foreground">
-            {data ? `${data.length.toLocaleString("ru")} уроков · ${subjects.length} предметов` : "Загрузка материалов…"}
+            {data ? `${data.length.toLocaleString("ru")} ${plural(data.length, "урок", "урока", "уроков")} · ${subjects.length} ${plural(subjects.length, "предмет", "предмета", "предметов")}` : "Загрузка материалов…"}
           </p>
           <div className="mt-6 inline-flex rounded-2xl bg-secondary p-1">
             {(["catalog", "ai"] as const).map((t) => (
@@ -173,4 +173,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       {children}
     </label>
   );
+}
+
+function plural(n: number, one: string, few: string, many: string) {
+  const a = n % 100, b = n % 10;
+  if (a >= 11 && a <= 14) return many;
+  return b === 1 ? one : b >= 2 && b <= 4 ? few : many;
 }
