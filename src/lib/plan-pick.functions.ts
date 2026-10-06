@@ -44,8 +44,12 @@ export const pickFromPlan = createServerFn({ method: "POST" })
     if (data.text.trim().length < 3 && !data.file) return empty("Опишите цель, вставьте план урока или прикрепите файл.");
 
     try {
-      const origin = new URL(getRequest().url).origin;
-      const all: Item[] = await (await fetch(`${origin}/cor.json`)).json();
+      const req = getRequest();
+      const origin = new URL(req.url).origin;
+      let r = await fetch(`${origin}/cor.json`, { headers: { cookie: req.headers.get("cookie") ?? "" } });
+      if (!r.ok) r = await fetch("https://resource-lesson-edu.lovable.app/cor.json");
+      if (!r.ok) return empty(`Не удалось загрузить каталог (${r.status}).`);
+      const all: Item[] = await r.json();
       const subjects = [...new Set(all.map((x) => x.s))];
 
       // 1. Извлечение целей
