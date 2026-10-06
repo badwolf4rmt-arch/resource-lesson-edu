@@ -28,7 +28,9 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
   const [res, setRes] = useState<PlanResult | null>(null);
   // какие поля заполнил ИИ (при новом тексте/файле они снова станут «Определить автоматически»)
   const [byAi, setByAi] = useState({ subject: false, grade: false });
+  const [stale, setStale] = useState(false);
   const resetAi = () => {
+    setStale(true);
     if (byAi.subject) setSubject(AUTO);
     if (byAi.grade) setGrade(AUTO);
     if (byAi.subject || byAi.grade) setByAi({ subject: false, grade: false });
@@ -61,7 +63,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
       const autoS = subject === AUTO || byAi.subject;
       const autoG = grade === AUTO || byAi.grade;
       const r = await run({ data: { text: t.slice(0, MAX), file: payload, subject: autoS ? "" : subject, grade: autoG ? null : (Number(grade.match(/\d+/)?.[0]) || null) } });
-      setRes(r);
+      setRes(r); setStale(false);
       const fillS = autoS && Boolean(r.subject);
       const fillG = autoG && r.grade != null;
       if (fillS) setSubject(r.subject);
@@ -85,19 +87,19 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
         <div>
           <span className="mb-1 block text-xs font-medium text-muted-foreground">Предмет</span>
           <Combobox
-            value={subject}
+            value={subject === AUTO && res?.subject && !stale ? res.subject : subject}
             onValueChange={(v) => { setSubject(v); setGrade(AUTO); setByAi({ subject: false, grade: false }); }}
             options={subjects}
             autoLabel="Определить автоматически"
             placeholder="Найти или ввести предмет"
             className="border-border bg-card shadow-none"
           />
-          {byAi.subject && <span className="mt-1 block text-xs text-brand">Определено ИИ по материалу</span>}
+          {(byAi.subject || (subject === AUTO && res?.subject && !stale)) && <span className="mt-1 block text-xs text-brand">Определено ИИ по материалу</span>}
         </div>
         <div>
           <span className="mb-1 block text-xs font-medium text-muted-foreground">Класс</span>
           <Combobox
-            value={grade}
+            value={grade === AUTO && res?.grade != null && !stale ? String(res.grade) : grade}
             onValueChange={(v) => { setGrade(v); setByAi((b) => ({ ...b, grade: false })); }}
             options={grades}
             autoLabel="Определить автоматически"
@@ -105,7 +107,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
             format={(v) => `${v} класс`}
             className="border-border bg-card shadow-none"
           />
-          {byAi.grade && <span className="mt-1 block text-xs text-brand">Определено ИИ по материалу</span>}
+          {(byAi.grade || (grade === AUTO && res?.grade != null && !stale)) && <span className="mt-1 block text-xs text-brand">Определено ИИ по материалу</span>}
         </div>
         <div
           onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
