@@ -56,17 +56,17 @@ export function PlanPicker({ subjects, gradesFor }: { subjects: string[]; grades
     }
   };
 
-  const ready = !loading && (text.trim().length >= 20 || file);
+  const ready = !loading && (text.trim().length >= 3 || file);
 
   return (
     <div className="space-y-6">
       <div className="rounded-3xl border border-border bg-card p-6">
-        <h2 className="text-xl font-semibold text-foreground">План урока</h2>
-        <p className="mt-1 text-sm text-muted-foreground">ИИ извлечёт учебные цели и подберёт к ним материалы ЦОР из каталога.</p>
+        <h2 className="text-xl font-semibold text-foreground">Чем вам помочь?</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Опишите учебную цель, вставьте план урока или прикрепите файл — ИИ сам определит цели и подберёт материалы ЦОР.</p>
 
         <div className="relative mt-5">
           <textarea className="field min-h-40 pb-8" maxLength={MAX} value={text} onChange={(e) => setText(e.target.value)}
-            placeholder="Вставьте текст плана урока, из учебника, статьи или презентации" />
+            placeholder="Например: научить решать задачи на проценты — или вставьте план урока, текст из учебника, статьи, презентации" />
           <span className="pointer-events-none absolute bottom-3 right-4 text-xs text-muted-foreground">{text.length}/{MAX}</span>
         </div>
 
@@ -118,7 +118,7 @@ export function PlanPicker({ subjects, gradesFor }: { subjects: string[]; grades
 
         <button onClick={submit} disabled={!ready}
           className="mt-5 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-40">
-          {loading ? "Анализирую план…" : "Извлечь цели и подобрать материалы"}
+          {loading ? "Подбираю материалы…" : "Подобрать материалы"}
         </button>
       </div>
 

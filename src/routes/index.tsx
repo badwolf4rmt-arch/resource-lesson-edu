@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AiPicker } from "@/components/AiPicker";
 import { PlanPicker } from "@/components/PlanPicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useMemo, useState } from "react";
@@ -30,7 +29,7 @@ function Index() {
   const [year, setYear] = useState("");
   const [q, setQ] = useState("");
   const [limit, setLimit] = useState(PAGE);
-  const [tab, setTab] = useState<"catalog" | "ai" | "plan">("catalog");
+  const [tab, setTab] = useState<"catalog" | "ai">("catalog");
 
   useEffect(() => {
     fetch("/cor.json").then((r) => r.json()).then(setData);
@@ -75,21 +74,16 @@ function Index() {
             {data ? `${data.length.toLocaleString("ru")} ${plural(data.length, "урок", "урока", "уроков")} · ${subjects.length} ${plural(subjects.length, "предмет", "предмета", "предметов")}` : "Загрузка материалов…"}
           </p>
           <div className="mt-6 inline-flex rounded-2xl bg-secondary p-1">
-            {(["catalog", "ai", "plan"] as const).map((t) => (
+            {(["catalog", "ai"] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)}
                 className={`rounded-xl px-5 py-2 text-sm font-medium transition ${tab === t ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-card"}`}>
-                {t === "catalog" ? "Каталог материалов" : t === "ai" ? "ИИ-подбор по цели" : "По плану урока"}
+                {t === "catalog" ? "Каталог материалов" : "ИИ-подбор материалов"}
               </button>
             ))}
           </div>
         </div>
       </header>
       {tab === "ai" && (
-        <main className="mx-auto max-w-3xl px-6 py-8">
-          <AiPicker subjects={subjects as string[]} gradesFor={(s) => [...new Set((data ?? []).filter((x) => x.s === s).map((x) => x.g))].sort((a, b) => a - b)} />
-        </main>
-      )}
-      {tab === "plan" && (
         <main className="mx-auto max-w-3xl px-6 py-8">
           <PlanPicker subjects={subjects as string[]} gradesFor={(s) => [...new Set((data ?? []).filter((x) => x.s === s).map((x) => x.g))].sort((a, b) => a - b)} />
         </main>
