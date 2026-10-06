@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { pickFromPlan, type PlanResult } from "@/lib/plan-pick.functions";
 import { Combobox } from "@/components/ui/combobox";
+import { LessonCard } from "@/components/LessonCard";
 
 const MAX = 20000;
 const AUTO = "__auto";
