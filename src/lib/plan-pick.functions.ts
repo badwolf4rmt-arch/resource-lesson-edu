@@ -41,7 +41,7 @@ export const pickFromPlan = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<PlanResult> => {
     const key = process.env["OPENROUTER_API_KEY"];
     if (!key) return empty("Ключ OpenRouter ещё не добавлен.");
-    if (data.text.trim().length < 20 && !data.file) return empty("Вставьте текст плана урока (от 20 символов) или прикрепите файл.");
+    if (data.text.trim().length < 3 && !data.file) return empty("Опишите цель, вставьте план урока или прикрепите файл.");
 
     try {
       const origin = new URL(getRequest().url).origin;
@@ -51,12 +51,12 @@ export const pickFromPlan = createServerFn({ method: "POST" })
       // 1. Извлечение целей
       const parts: unknown[] = [{
         type: "text",
-        text: `Ты методист. Проанализируй план урока${data.file ? " (во вложении)" : ""} и извлеки учебные цели.
+        text: `Ты методист. Учитель прислал материал${data.file ? " (во вложении)" : ""}: это может быть короткая формулировка учебной цели, план урока или учебный текст. Определи, что это, и извлеки учебные цели (если это уже цель — уточни и разбей её при необходимости).
 ${data.subject ? `Предмет задан учителем: ${data.subject}.` : `Определи предмет — строго одно название из списка: ${subjects.join("; ")}.`}
 ${data.grade ? `Класс задан учителем: ${data.grade}.` : "Определи класс (число 1–11) или null, если неясно."}
 Сформулируй 2–5 конкретных учебных целей (что ученики должны знать/уметь), коротко.
 Ответ строго JSON: {"subject": string, "grade": number|null, "goals": string[]}
-${data.text.trim() ? `\nТекст плана урока:\n${data.text}` : ""}`,
+${data.text.trim() ? `\nТекст от учителя:\n${data.text}` : ""}`,
       }];
       if (data.file) {
         const url = `data:${data.file.mime};base64,${data.file.base64}`;
