@@ -26,6 +26,13 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [res, setRes] = useState<PlanResult | null>(null);
+  // какие поля заполнил ИИ (при новом тексте/файле они снова станут «Определить автоматически»)
+  const [byAi, setByAi] = useState({ subject: false, grade: false });
+  const resetAi = () => {
+    if (byAi.subject) setSubject(AUTO);
+    if (byAi.grade) setGrade(AUTO);
+    if (byAi.subject || byAi.grade) setByAi({ subject: false, grade: false });
+  };
   const grades = Array.from({ length: 11 }, (_, i) => String(i + 1));
 
   const accept = (f?: File) => {
@@ -33,6 +40,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
     if (!f) return;
     if (f.size > 10 * 1024 * 1024) return setErr("Файл больше 10 МБ.");
     if (!/\.(docx|pdf|txt|jpe?g|png)$/i.test(f.name)) return setErr("Формат — DOCX, PDF, TXT, JPG, PNG.");
+    resetAi();
     setFile(f);
   };
 
@@ -50,7 +58,15 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
           t = `${t}\n\n${r.value}`.trim();
         } else payload = { name: file.name, mime: ext === "pdf" ? "application/pdf" : ext === "png" ? "image/png" : "image/jpeg", base64: await toBase64(file) };
       }
-      setRes(await run({ data: { text: t.slice(0, MAX), file: payload, subject: subject === AUTO ? "" : subject, grade: grade === AUTO ? null : (Number(grade.match(/\d+/)?.[0]) || null) } }));
+      const autoS = subject === AUTO || byAi.subject;
+      const autoG = grade === AUTO || byAi.grade;
+      const r = await run({ data: { text: t.slice(0, MAX), file: payload, subject: autoS ? "" : subject, grade: autoG ? null : (Number(grade.match(/\d+/)?.[0]) || null) } });
+      setRes(r);
+      const fillS = autoS && Boolean(r.subject);
+      const fillG = autoG && r.grade != null;
+      if (fillS) setSubject(r.subject);
+      if (fillG) setGrade(String(r.grade));
+      setByAi({ subject: fillS, grade: fillG });
     } catch (e) {
       const m = e instanceof Error ? e.message : "Ошибка запроса";
       setErr(/unauthori[sz]ed|not valid JSON/i.test(m)
@@ -70,24 +86,26 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
           <span className="mb-1 block text-xs font-medium text-muted-foreground">Предмет</span>
           <Combobox
             value={subject}
-            onValueChange={(v) => { setSubject(v); setGrade(AUTO); }}
+            onValueChange={(v) => { setSubject(v); setGrade(AUTO); setByAi({ subject: false, grade: false }); }}
             options={subjects}
             autoLabel="Определить автоматически"
             placeholder="Найти или ввести предмет"
             className="border-border bg-card shadow-none"
           />
+          {byAi.subject && <span className="mt-1 block text-xs text-brand">Определено ИИ по материалу</span>}
         </div>
         <div>
           <span className="mb-1 block text-xs font-medium text-muted-foreground">Класс</span>
           <Combobox
             value={grade}
-            onValueChange={setGrade}
+            onValueChange={(v) => { setGrade(v); setByAi((b) => ({ ...b, grade: false })); }}
             options={grades}
             autoLabel="Определить автоматически"
             placeholder="Найти или ввести класс"
             format={(v) => `${v} класс`}
             className="border-border bg-card shadow-none"
           />
+          {byAi.grade && <span className="mt-1 block text-xs text-brand">Определено ИИ по материалу</span>}
         </div>
         <div
           onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
@@ -98,7 +116,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
             <>
               <p className="break-all text-sm font-semibold text-foreground">{file.name}</p>
               <p className="mt-1 text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} МБ</p>
-              <button onClick={() => { setFile(null); if (input.current) input.current.value = ""; }}
+              <button onClick={() => { resetAi(); setFile(null); if (input.current) input.current.value = ""; }}
                 className="mt-3 rounded-md bg-secondary px-4 py-1.5 text-xs font-medium text-foreground hover:opacity-90">Убрать файл</button>
             </>
           ) : (
@@ -114,7 +132,7 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
         <div>
           <span className="mb-1 block text-xs font-medium text-muted-foreground">Цель, план урока или текст</span>
           <div className="relative">
-            <textarea className="field min-h-40 pb-8" maxLength={MAX} value={text} onChange={(e) => setText(e.target.value)}
+            <textarea className="field min-h-40 pb-8" maxLength={MAX} value={text} onChange={(e) => { resetAi(); setText(e.target.value); }}
               placeholder="Например: научить решать задачи на проценты — или вставьте план урока, текст из учебника, статьи, презентации" />
             <span className="pointer-events-none absolute bottom-3 right-4 text-xs text-muted-foreground">{text.length}/{MAX}</span>
           </div>
