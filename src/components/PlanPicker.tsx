@@ -64,6 +64,29 @@ export function PlanPicker({ subjects, gradesFor }: { subjects: string[]; grades
         <h2 className="text-xl font-semibold text-foreground">Чем вам помочь?</h2>
         <p className="mt-1 text-sm text-muted-foreground">Опишите учебную цель, вставьте план урока или прикрепите файл — ИИ сам определит цели и подберёт материалы ЦОР.</p>
 
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium text-muted-foreground">Предмет</span>
+            <Select value={subject} onValueChange={(v) => { setSubject(v); setGrade(AUTO); }}>
+              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue /></SelectTrigger>
+              <SelectContent className="max-h-72">
+                <SelectItem value={AUTO}>Определить автоматически</SelectItem>
+                {subjects.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium text-muted-foreground">Класс</span>
+            <Select value={grade} onValueChange={setGrade}>
+              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue /></SelectTrigger>
+              <SelectContent className="max-h-72">
+                <SelectItem value={AUTO}>Определить автоматически</SelectItem>
+                {grades.map((g) => <SelectItem key={g} value={String(g)}>{g} класс</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </label>
+        </div>
+
         <div className="relative mt-5">
           <textarea className="field min-h-40 pb-8" maxLength={MAX} value={text} onChange={(e) => setText(e.target.value)}
             placeholder="Например: научить решать задачи на проценты — или вставьте план урока, текст из учебника, статьи, презентации" />
@@ -93,28 +116,6 @@ export function PlanPicker({ subjects, gradesFor }: { subjects: string[]; grades
           <input ref={input} type="file" hidden accept=".docx,.pdf,.txt,.jpg,.jpeg,.png" onChange={(e) => accept(e.target.files?.[0])} />
         </div>
 
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <label className="block">
-            <span className="mb-1 block text-xs font-medium text-muted-foreground">Предмет</span>
-            <Select value={subject} onValueChange={(v) => { setSubject(v); setGrade(AUTO); }}>
-              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue /></SelectTrigger>
-              <SelectContent className="max-h-72">
-                <SelectItem value={AUTO}>Определить автоматически</SelectItem>
-                {subjects.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-xs font-medium text-muted-foreground">Класс</span>
-            <Select value={grade} onValueChange={setGrade}>
-              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue /></SelectTrigger>
-              <SelectContent className="max-h-72">
-                <SelectItem value={AUTO}>Определить автоматически</SelectItem>
-                {grades.map((g) => <SelectItem key={g} value={String(g)}>{g} класс</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </label>
-        </div>
 
         <button onClick={submit} disabled={!ready}
           className="mt-5 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-40">
