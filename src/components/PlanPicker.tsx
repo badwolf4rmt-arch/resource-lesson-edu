@@ -134,11 +134,11 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
           <>
             <div className="rounded-2xl border border-border/40 bg-hero px-6 py-5 text-foreground">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Определено из файла</p>
-              <p className="mt-1 text-base font-semibold">{res.subject}{res.grade ? ` · ${res.grade} класс` : ""}</p>
+              <p className="mt-1 text-base font-semibold">{cap(res.subject)}{res.grade ? ` · ${res.grade} класс` : ""}</p>
               {res.goals.length > 0 && (
                 <>
                   <h3 className="mt-4 text-sm font-semibold">Учебные цели урока</h3>
-                  <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed">{res.goals.map((g) => <li key={g}>{g}</li>)}</ol>
+                  <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed">{res.goals.map((g) => <li key={g}>{cap(g)}</li>)}</ol>
                 </>
               )}
               {res.summary && <p className="mt-4 text-sm leading-relaxed">{res.summary}</p>}
