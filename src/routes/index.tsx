@@ -85,7 +85,7 @@ function Index() {
       </header>
       {tab === "ai" && (
         <main className="mx-auto max-w-3xl px-6 py-8">
-          <PlanPicker subjects={subjects as string[]} gradesFor={(s) => [...new Set((data ?? []).filter((x) => x.s === s).map((x) => x.g))].sort((a, b) => a - b)} />
+          <PlanPicker subjects={subjects as string[]} />
         </main>
       )}
       {tab === "catalog" && (

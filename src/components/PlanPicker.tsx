@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { pickFromPlan, type PlanResult } from "@/lib/plan-pick.functions";
+import { Combobox } from "@/components/ui/combobox";
 
 const MAX = 20000;
 const AUTO = "__auto";
@@ -13,7 +13,7 @@ async function toBase64(f: File) {
   return btoa(s);
 }
 
-export function PlanPicker({ subjects, gradesFor }: { subjects: string[]; gradesFor: (s: string) => number[] }) {
+export function PlanPicker({ subjects }: { subjects: string[] }) {
   const run = useServerFn(pickFromPlan);
   const input = useRef<HTMLInputElement>(null);
   const [text, setText] = useState("");
@@ -24,7 +24,7 @@ export function PlanPicker({ subjects, gradesFor }: { subjects: string[]; grades
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [res, setRes] = useState<PlanResult | null>(null);
-  const grades = subject !== AUTO ? gradesFor(subject) : [...new Set(subjects.flatMap(gradesFor))].sort((a, b) => a - b);
+  const grades = Array.from({ length: 11 }, (_, i) => String(i + 1));
 
   const accept = (f?: File) => {
     setErr("");
@@ -65,26 +65,27 @@ export function PlanPicker({ subjects, gradesFor }: { subjects: string[]; grades
         <p className="mt-1 text-sm text-muted-foreground">Опишите учебную цель, вставьте план урока или прикрепите файл — ИИ сам определит цели и подберёт материалы ЦОР.</p>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
-          <label className="block">
+          <div>
             <span className="mb-1 block text-xs font-medium text-muted-foreground">Предмет</span>
-            <Select value={subject} onValueChange={(v) => { setSubject(v); setGrade(AUTO); }}>
-              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue /></SelectTrigger>
-              <SelectContent className="max-h-72">
-                <SelectItem value={AUTO}>Определить автоматически</SelectItem>
-                {subjects.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </label>
-          <label className="block">
+            <Combobox
+              value={subject}
+              onValueChange={(v) => { setSubject(v); setGrade(AUTO); }}
+              options={subjects}
+              autoLabel="Определить автоматически"
+              placeholder="Найти или ввести предмет"
+            />
+          </div>
+          <div>
             <span className="mb-1 block text-xs font-medium text-muted-foreground">Класс</span>
-            <Select value={grade} onValueChange={setGrade}>
-              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue /></SelectTrigger>
-              <SelectContent className="max-h-72">
-                <SelectItem value={AUTO}>Определить автоматически</SelectItem>
-                {grades.map((g) => <SelectItem key={g} value={String(g)}>{g} класс</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </label>
+            <Combobox
+              value={grade}
+              onValueChange={setGrade}
+              options={grades}
+              autoLabel="Определить автоматически"
+              placeholder="Найти или ввести класс"
+              format={(v) => `${v} класс`}
+            />
+          </div>
         </div>
 
         <div className="relative mt-5">
