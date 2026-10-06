@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PlanPicker } from "@/components/PlanPicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Combobox } from "@/components/ui/combobox";
 import { useEffect, useMemo, useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -96,18 +97,27 @@ function Index() {
             <input className="field" value={q} onChange={(e) => setQ(e.target.value)} placeholder="например, проценты" />
           </Field>
           <Field label="Предмет">
-            <Select value={subject} onValueChange={(v) => { setSubject(v); setGrade(""); setType(""); }}>
-              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Все предметы" /></SelectTrigger>
-              <SelectContent className="max-h-72">
-                {subjects.map((s) => <SelectItem key={s} value={String(s)}>{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Combobox
+              value={subject}
+              onValueChange={(v) => { setSubject(v); setGrade(""); setType(""); }}
+              options={subjects.map(String)}
+              emptyLabel="Все предметы"
+              placeholder="Найти предмет"
+              freeInput={false}
+              className="border-border bg-card shadow-none"
+            />
           </Field>
           <Field label="Класс">
-            <Select value={grade} onValueChange={setGrade}>
-              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Все классы" /></SelectTrigger>
-              <SelectContent className="max-h-72">{grades.map((g) => <SelectItem key={g} value={String(g)}>{g} класс</SelectItem>)}</SelectContent>
-            </Select>
+            <Combobox
+              value={grade}
+              onValueChange={setGrade}
+              options={grades.map(String)}
+              emptyLabel="Все классы"
+              placeholder="Найти класс"
+              freeInput={false}
+              format={(v) => `${v} класс`}
+              className="border-border bg-card shadow-none"
+            />
           </Field>
           <Field label="Уровень">
             <Select value={level} onValueChange={setLevel}>
