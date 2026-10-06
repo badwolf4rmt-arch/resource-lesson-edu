@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { pickMaterials, type Pick } from "@/lib/ai-pick.functions";
 
 export function AiPicker({ subjects, gradesFor }: { subjects: string[]; gradesFor: (s: string) => number[] }) {
@@ -32,17 +33,17 @@ export function AiPicker({ subjects, gradesFor }: { subjects: string[]; gradesFo
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-muted-foreground">Предмет</span>
-            <select className="field" value={subject} onChange={(e) => { setSubject(e.target.value); setGrade(""); }}>
-              <option value="">Выберите предмет</option>
-              {subjects.map((s) => <option key={s}>{s}</option>)}
-            </select>
+            <Select value={subject} onValueChange={(v) => { setSubject(v); setGrade(""); }}>
+              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Выберите предмет" /></SelectTrigger>
+              <SelectContent className="max-h-72">{subjects.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+            </Select>
           </label>
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-muted-foreground">Класс</span>
-            <select className="field" value={grade} onChange={(e) => setGrade(e.target.value)} disabled={!subject}>
-              <option value="">Выберите класс</option>
-              {grades.map((g) => <option key={g} value={g}>{g} класс</option>)}
-            </select>
+            <Select value={grade} onValueChange={setGrade} disabled={!subject}>
+              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Выберите класс" /></SelectTrigger>
+              <SelectContent className="max-h-72">{grades.map((g) => <SelectItem key={g} value={String(g)}>{g} класс</SelectItem>)}</SelectContent>
+            </Select>
           </label>
         </div>
         <label className="mt-4 block">

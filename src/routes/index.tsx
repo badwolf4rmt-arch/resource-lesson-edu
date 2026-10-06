@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AiPicker } from "@/components/AiPicker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useMemo, useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -95,36 +96,42 @@ function Index() {
             <input className="field" value={q} onChange={(e) => setQ(e.target.value)} placeholder="например, проценты" />
           </Field>
           <Field label="Предмет">
-            <select className="field" value={subject} onChange={(e) => { setSubject(e.target.value); setGrade(""); setType(""); }}>
-              <option value="">Все предметы</option>
-              {subjects.map((s) => <option key={s}>{s}</option>)}
-            </select>
+            <Select value={subject} onValueChange={(v) => { setSubject(v); setGrade(""); setType(""); }}>
+              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Все предметы" /></SelectTrigger>
+              <SelectContent className="max-h-72">
+                {subjects.map((s) => <SelectItem key={s} value={String(s)}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </Field>
           <Field label="Класс">
-            <select className="field" value={grade} onChange={(e) => setGrade(e.target.value)}>
-              <option value="">Все классы</option>
-              {grades.map((g) => <option key={g} value={g}>{g} класс</option>)}
-            </select>
+            <Select value={grade} onValueChange={setGrade}>
+              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Все классы" /></SelectTrigger>
+              <SelectContent className="max-h-72">{grades.map((g) => <SelectItem key={g} value={String(g)}>{g} класс</SelectItem>)}</SelectContent>
+            </Select>
           </Field>
           <Field label="Уровень">
-            <select className="field" value={level} onChange={(e) => setLevel(e.target.value)}>
-              <option value="">Любой</option>
-              <option>Базовый</option>
-              <option>Углублённый</option>
-            </select>
+            <Select value={level} onValueChange={setLevel}>
+              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Любой" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Базовый">Базовый</SelectItem>
+                <SelectItem value="Углублённый">Углублённый</SelectItem>
+              </SelectContent>
+            </Select>
           </Field>
           <Field label="Тип урока">
-            <select className="field" value={type} onChange={(e) => setType(e.target.value)}>
-              <option value="">Любой</option>
-              {types.map((t) => <option key={t}>{t}</option>)}
-            </select>
+            <Select value={type} onValueChange={setType}>
+              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Любой" /></SelectTrigger>
+              <SelectContent className="max-h-72">{types.map((t) => <SelectItem key={t} value={String(t)}>{t}</SelectItem>)}</SelectContent>
+            </Select>
           </Field>
           <Field label="Плашка ЭОР">
-            <select className="field" value={year} onChange={(e) => setYear(e.target.value)}>
-              <option value="">Любая</option>
-              {years.map((y) => <option key={y} value={y}>{y}</option>)}
-              <option value="none">Без плашки</option>
-            </select>
+            <Select value={year} onValueChange={setYear}>
+              <SelectTrigger className="border-border bg-card shadow-none"><SelectValue placeholder="Любая" /></SelectTrigger>
+              <SelectContent className="max-h-72">
+                {years.map((y) => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
+                <SelectItem value="none">Без плашки</SelectItem>
+              </SelectContent>
+            </Select>
           </Field>
           <button onClick={reset} className="w-full rounded-md border border-border px-3 py-2 text-sm text-muted-foreground hover:bg-muted">
             Сбросить фильтры
