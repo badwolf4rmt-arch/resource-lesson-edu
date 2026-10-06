@@ -50,7 +50,10 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
       }
       setRes(await run({ data: { text: t.slice(0, MAX), file: payload, subject: subject === AUTO ? "" : subject, grade: grade === AUTO ? null : Number(grade) } }));
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Ошибка запроса");
+      const m = e instanceof Error ? e.message : "Ошибка запроса";
+      setErr(/unauthori[sz]ed|not valid JSON/i.test(m)
+        ? "Сессия окна предпросмотра истекла. Обновите страницу (F5) и попробуйте снова — или откройте опубликованный сайт."
+        : m);
     } finally {
       setLoading(false);
     }
