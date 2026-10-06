@@ -92,7 +92,7 @@ function Index() {
       {tab === "catalog" && (
 
       <main className="mx-auto grid max-w-7xl gap-10 px-8 py-10 md:grid-cols-[300px_1fr]">
-        <aside className="space-y-5 md:sticky md:top-6 md:self-start">
+        <aside className="space-y-6 rounded-2xl border border-border bg-card/60 p-5 md:sticky md:top-6 md:self-start">
           <Field label="Поиск по теме, ключевым словам">
             <input className="field" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Например, проценты" />
           </Field>
