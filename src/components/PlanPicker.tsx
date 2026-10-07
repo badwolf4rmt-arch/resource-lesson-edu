@@ -154,11 +154,17 @@ export function PlanPicker({ subjects }: { subjects: string[] }) {
         {res && !res.error && !loading && (
           <>
             <div className="rounded-2xl border border-border/40 bg-hero px-6 py-5 text-foreground">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Определено из файла</p>
-              <p className="mt-1 text-base font-semibold">{cap(res.subject)}{res.grade ? ` · ${res.grade} класс` : ""}</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{res.source === "file" ? "Определено из файла" : res.source === "both" ? "Определено из файла и текста" : "Определено из текста"}</p>
+              <p className="mt-1 text-base font-semibold">{cap(res.subject)}{res.grade ? ` · ${res.grade} класс` : ""}{res.lessonType ? ` · ${cap(res.lessonType)}` : ""}</p>
+              {res.aim && (
+                <>
+                  <h3 className="mt-4 text-sm font-semibold">Цель урока</h3>
+                  <p className="mt-2 text-sm leading-relaxed">{cap(res.aim)}</p>
+                </>
+              )}
               {res.goals.length > 0 && (
                 <>
-                  <h3 className="mt-4 text-sm font-semibold">Учебные цели урока</h3>
+                  <h3 className="mt-4 text-sm font-semibold">Задачи урока</h3>
                   <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed">{res.goals.map((g) => <li key={g}>{cap(g)}</li>)}</ol>
                 </>
               )}
